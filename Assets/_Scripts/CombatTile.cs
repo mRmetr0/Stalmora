@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 public class CombatTile : MonoBehaviour
 {
+    [Header("Color Data")]
     [SerializeField] private Color defaultColor;
     [SerializeField] private Color hoverColor;
     [SerializeField] private float colorLerpSpeed = .7f;
@@ -25,5 +26,10 @@ public class CombatTile : MonoBehaviour
     private void OnMouseExit()
     {
         renderer.DOColor(defaultColor, colorLerpSpeed);
+    }
+    
+    public Vector2 GetCombatTilePos()
+    {
+        return ((RectTransform)transform).position;
     }
 }
