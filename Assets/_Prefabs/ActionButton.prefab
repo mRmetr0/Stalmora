@@ -197,10 +197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   action: {fileID: 0}
-  defaultColor: {r: 0.49056602, g: 0.49056602, b: 0.49056602, a: 1}
-  hoverColor: {r: 0.9245283, g: 0.90739906, b: 0.37068352, a: 1}
-  downColor: {r: 0.8396226, g: 0.46665522, b: 0, a: 1}
-  colorLerpSpeed: 0.7
+  uiData: {fileID: 11400000, guid: 059d56bc4d233fd4db809077fc41da7d, type: 2}
 --- !u!114 &8116436638640812133
 MonoBehaviour:
   m_ObjectHideFlags: 0

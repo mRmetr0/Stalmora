@@ -9,12 +9,9 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
 {
     [SerializeField] private CombatAction action;
 
-    [Header("Color Data")]
-    [SerializeField] private Color defaultColor;
-    [SerializeField] private Color hoverColor;
-    [SerializeField] private Color downColor;
-    [SerializeField] private float colorLerpSpeed = .7f;
+    
 
+    [SerializeField] private UIUnivarsalData uiData;
     private Image renderer;
 
     private void Awake()
@@ -30,16 +27,16 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
     public void OnPointerDown(PointerEventData data)
     {
         action.UseAction(CombatManager.manager.PlayerCharacter);
-        renderer.DOColor(downColor, colorLerpSpeed);
+        renderer.DOColor(uiData.selectColor, uiData.selectLerpSpeed);
     }
     
     public void OnPointerEnter(PointerEventData data)
     {
-        renderer.DOColor(hoverColor, colorLerpSpeed);
+        renderer.DOColor(uiData.hoverColor, uiData.hoverLerpSpeed);
     }
     
     public void OnPointerExit(PointerEventData data)
     {
-        renderer.DOColor(defaultColor, colorLerpSpeed);
+        renderer.DOColor(uiData.defaultColor, uiData.hoverLerpSpeed);
     }
 }

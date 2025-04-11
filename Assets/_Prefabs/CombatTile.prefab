@@ -142,9 +142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d7b6ea844abe2a4bac370ccf66e1e1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultColor: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
-  hoverColor: {r: 0.8962264, g: 0.6492242, b: 0.2240566, a: 1}
-  colorLerpSpeed: 0.34
+  uiData: {fileID: 11400000, guid: 059d56bc4d233fd4db809077fc41da7d, type: 2}
 --- !u!114 &589712050554465107
 MonoBehaviour:
   m_ObjectHideFlags: 0

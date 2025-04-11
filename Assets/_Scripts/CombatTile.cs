@@ -5,11 +5,7 @@ using UnityEngine.EventSystems;
 
 public class CombatTile : MonoBehaviour
 {
-    [Header("Color Data")]
-    [SerializeField] private Color defaultColor;
-    [SerializeField] private Color hoverColor;
-    [SerializeField] private float colorLerpSpeed = .7f;
-
+    [SerializeField] private UIUnivarsalData uiData;
     private SpriteRenderer renderer;
 
     [NonSerialized] public Character occupant = null;
@@ -17,17 +13,17 @@ public class CombatTile : MonoBehaviour
     private void Awake()
     {
         renderer = GetComponentInChildren<SpriteRenderer>();
-        renderer.color = defaultColor;
+        renderer.color = uiData.defaultColor;
     }
 
     private void OnMouseEnter()
     {
-        renderer.DOColor(hoverColor, colorLerpSpeed);
+        renderer.DOColor(uiData.hoverColor, uiData.hoverLerpSpeed);
     }
 
     private void OnMouseExit()
     {
-        renderer.DOColor(defaultColor, colorLerpSpeed);
+        renderer.DOColor(uiData.defaultColor, uiData.hoverLerpSpeed);
     }
     
     public Vector2 GetCombatTilePos()
