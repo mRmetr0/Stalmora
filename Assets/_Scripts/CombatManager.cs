@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Security;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,16 +20,30 @@ public class CombatManager : MonoBehaviour
     {
         SetUpTileLayout();
         tiles = tileContainer.GetComponentsInChildren<CombatTile>();
-        Debug.Log(tiles.Length);
-        
-        foreach (CombatTile tile in tiles)
-        {
-            Debug.Log(tile.GetCombatTilePos());
-        }
 
+        StartCoroutine(LateAwake());
+    }
+
+    private IEnumerator LateAwake() //TODO: Have layout group set up in code instead of waiting a frame
+    {
+        yield return new WaitForEndOfFrame();
         character.transform.position = tiles[0].GetCombatTilePos();
     }
 
+    private void Update()
+    {
+        int move = (Input.GetKey(KeyCode.LeftShift)) ? 2 : 1;
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            MoveCharacter(character, -move);   
+        }
+        
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            MoveCharacter(character, move);   
+        }
+    }
+    
     private void SetUpTileLayout()
     {
         HorizontalLayoutGroup group = tileContainer.GetComponent<HorizontalLayoutGroup>();
@@ -39,9 +55,19 @@ public class CombatManager : MonoBehaviour
 
     public void MoveCharacter(Character character, int direction)
     {
-        int nextPos = character.tilePos + direction;
-        if (nextPos < 0 || nextPos >= tiles.Length) return;
+        int oldPos = character.tilePos;
+        int nextPos = character.tilePos;
+        for (int i = 1; i <= Mathf.Abs(direction); i++)
+        {
+            nextPos = character.tilePos + direction / Mathf.Abs(direction) * i;
+            //Check if can move
+            if (nextPos < 0 || nextPos >= tiles.Length) return; //CANNOT MOVE
+            if (tiles[nextPos].occupied) return; //CANNOT MOVE
+        }
+        //Move and update data
+        tiles[oldPos].occupied = false;
         character.tilePos = nextPos;
         character.transform.DOMove(tiles[nextPos].GetCombatTilePos(), moveLerpSpeed);
+        tiles[nextPos].occupied = true;
     }
 }

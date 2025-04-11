@@ -12,6 +12,8 @@ public class CombatTile : MonoBehaviour
 
     private SpriteRenderer renderer;
 
+    [NonSerialized] public bool occupied;
+
     private void Awake()
     {
         renderer = GetComponentInChildren<SpriteRenderer>();
