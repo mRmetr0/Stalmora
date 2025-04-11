@@ -12,6 +12,7 @@ public class CombatManager : MonoBehaviour
 {
     public static CombatManager manager;
     public Character PlayerCharacter;
+    public Character EnemyCharacter;
 
     [SerializeField] private GameObject tileContainer;
     private CombatTile[] tiles;
@@ -44,7 +45,8 @@ public class CombatManager : MonoBehaviour
     private IEnumerator LateAwake() //TODO: Have layout group set up in code instead of waiting a frame
     {
         yield return new WaitForEndOfFrame();
-        PlayerCharacter.transform.position = tiles[0].GetCombatTilePos();
+        PlaceCharacter(PlayerCharacter, 1);
+        PlaceCharacter(EnemyCharacter, 3);
     }
 
     private void Update()
@@ -97,5 +99,14 @@ public class CombatManager : MonoBehaviour
         character.tilePos = nextPos;
         character.transform.DOMove(tiles[nextPos].GetCombatTilePos(), moveLerpSpeed);
         tiles[nextPos].occupant = character;
+    }
+
+    private void PlaceCharacter(Character character, int newPos)
+    {
+        if (newPos < 0 || newPos >= tiles.Length) return;
+        tiles[character.tilePos].occupant = null;
+        character.tilePos = newPos;
+        character.transform.position = tiles[newPos].GetCombatTilePos();
+        tiles[newPos].occupant = character;
     }
 }
