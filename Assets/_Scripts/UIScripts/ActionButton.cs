@@ -9,8 +9,6 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
 {
     [SerializeField] private CombatAction action;
 
-    
-
     [SerializeField] private UIUnivarsalData uiData;
     private Image renderer;
 
@@ -27,7 +25,8 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
     public void OnPointerDown(PointerEventData data)
     {
         action.UseAction(CombatManager.manager.PlayerCharacter);
-        renderer.DOColor(uiData.selectColor, uiData.selectLerpSpeed);
+        renderer.color = uiData.selectColor;
+        renderer.DOColor(uiData.hoverColor, uiData.selectLerpSpeed);
     }
     
     public void OnPointerEnter(PointerEventData data)

@@ -35,7 +35,7 @@ public class CombatAction : ScriptableObject
         public Type type;
         [Tooltip("The amount that this type will do")]
         public int value;
-        [ShowIf("type", Type.Damage)] [AllowNesting] [Tooltip("Distance of tiles, relative to the caster")]
+        [ShowIf("type", Type.Damage)] [AllowNesting]
         public int[] range;
 
         /// <summary>
@@ -49,18 +49,31 @@ public class CombatAction : ScriptableObject
             switch (type)
             {
                 case(Type.Damage):
+                    HandleAttack(self);
                     break;
                 case(Type.Heal):
                     self.HealHealth(value);
                     break;
                 case(Type.Block):
+                    self.GetBlock(value);
                     break;
                 case(Type.Move):
                     CombatManager.manager.MoveCharacter(self, value);
                     break;
             }
-
             return true;
+        }
+
+        private void HandleAttack(Character attacker)
+        {
+            int startPos = attacker.tilePos;
+            for (int i = 0; i < range.Length; i++)
+            {
+                int pos = startPos + (range[i] * (attacker.facingRight ? 1 : -1));
+                CombatTile toAttack = CombatManager.manager.GetTile(pos);
+                if (toAttack is null) continue;
+                toAttack.AttackTile(value);
+            }
         }
     }
 }

@@ -33,6 +33,8 @@ public class CombatTile : MonoBehaviour
 
     public void AttackTile(int damage)
     {
+        renderer.color = uiData.hurtColor;
+        renderer.DOColor(uiData.defaultColor, uiData.outOfHurtLerpSpeed);
         if (occupant is not null)
             occupant.TakeDamage(damage);
     }

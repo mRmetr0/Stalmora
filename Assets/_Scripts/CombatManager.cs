@@ -49,6 +49,7 @@ public class CombatManager : MonoBehaviour
 
     private void Update()
     {
+        //DEBUG TOOLS
         int move = (Input.GetKey(KeyCode.LeftShift)) ? 2 : 1;
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -58,6 +59,11 @@ public class CombatManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             MoveCharacter(PlayerCharacter, move);   
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            PlayerCharacter.TakeDamage(1);
         }
     }
     
@@ -70,6 +76,12 @@ public class CombatManager : MonoBehaviour
         group.SetLayoutVertical();
     }
 
+    public CombatTile GetTile(int posIndex)
+    {
+        if (posIndex < 0 || posIndex >= tiles.Length) return null;
+        return tiles[posIndex];
+    }
+
     public void MoveCharacter(Character character, int direction)
     {
         int oldPos = character.tilePos;
@@ -78,8 +90,7 @@ public class CombatManager : MonoBehaviour
         {
             nextPos = character.tilePos + direction / Mathf.Abs(direction) * i;
             //Check if can move
-            if (nextPos < 0 || nextPos >= tiles.Length) return; //CANNOT MOVE
-            if (tiles[nextPos].Occupied()) return; //CANNOT MOVE
+            if (nextPos < 0 || nextPos >= tiles.Length || tiles[nextPos].Occupied()) return; //CANNOT MOVE
         }
         //Move and update data
         tiles[oldPos].occupant = null;
