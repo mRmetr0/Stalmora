@@ -3,12 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security;
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour
 {
-    [SerializeField] private Character character;
+    public static CombatManager manager;
+    public Character PlayerCharacter;
 
     [SerializeField] private GameObject tileContainer;
     private CombatTile[] tiles;
@@ -18,16 +21,30 @@ public class CombatManager : MonoBehaviour
 
     private void Awake()
     {
+        if (manager != null)
+        {
+            Debug.LogError("TOO MANY MANAGERS!!");
+            Destroy(gameObject);
+            return;
+        }
+
+        manager = this;
+
         SetUpTileLayout();
         tiles = tileContainer.GetComponentsInChildren<CombatTile>();
 
         StartCoroutine(LateAwake());
     }
 
+    private void OnDestroy()
+    {
+        if (manager == this) manager = null;
+    }
+
     private IEnumerator LateAwake() //TODO: Have layout group set up in code instead of waiting a frame
     {
         yield return new WaitForEndOfFrame();
-        character.transform.position = tiles[0].GetCombatTilePos();
+        PlayerCharacter.transform.position = tiles[0].GetCombatTilePos();
     }
 
     private void Update()
@@ -35,12 +52,12 @@ public class CombatManager : MonoBehaviour
         int move = (Input.GetKey(KeyCode.LeftShift)) ? 2 : 1;
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            MoveCharacter(character, -move);   
+            MoveCharacter(PlayerCharacter, -move);   
         }
         
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            MoveCharacter(character, move);   
+            MoveCharacter(PlayerCharacter, move);   
         }
     }
     
@@ -62,12 +79,12 @@ public class CombatManager : MonoBehaviour
             nextPos = character.tilePos + direction / Mathf.Abs(direction) * i;
             //Check if can move
             if (nextPos < 0 || nextPos >= tiles.Length) return; //CANNOT MOVE
-            if (tiles[nextPos].occupied) return; //CANNOT MOVE
+            if (tiles[nextPos].Occupied()) return; //CANNOT MOVE
         }
         //Move and update data
-        tiles[oldPos].occupied = false;
+        tiles[oldPos].occupant = null;
         character.tilePos = nextPos;
         character.transform.DOMove(tiles[nextPos].GetCombatTilePos(), moveLerpSpeed);
-        tiles[nextPos].occupied = true;
+        tiles[nextPos].occupant = character;
     }
 }

@@ -12,7 +12,7 @@ public class CombatTile : MonoBehaviour
 
     private SpriteRenderer renderer;
 
-    [NonSerialized] public bool occupied;
+    [NonSerialized] public Character occupant = null;
 
     private void Awake()
     {
@@ -33,5 +33,16 @@ public class CombatTile : MonoBehaviour
     public Vector2 GetCombatTilePos()
     {
         return ((RectTransform)transform).position;
+    }
+
+    public void AttackTile(int damage)
+    {
+        if (occupant is not null)
+            occupant.TakeDamage(damage);
+    }
+
+    public bool Occupied()
+    {
+        return occupant is not null;
     }
 }
