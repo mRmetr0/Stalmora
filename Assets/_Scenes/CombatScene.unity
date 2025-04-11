@@ -803,7 +803,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiData: {fileID: 11400000, guid: 059d56bc4d233fd4db809077fc41da7d, type: 2}
   maxHealth: 10
-  maxBlock: 0
+  maxBlock: 5
   tilePos: 0
   facingRight: 1
 --- !u!4 &1241730081

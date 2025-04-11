@@ -10,11 +10,13 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
     [SerializeField] private CombatAction action;
 
     [SerializeField] private UIUnivarsalData uiData;
+    private Sequence sequence;
     private Image renderer;
 
     private void Awake()
     {
         renderer = GetComponent<Image>();
+        sequence = DOTween.Sequence();
         
         TMP_Text label = GetComponentInChildren<TMP_Text>();
         label.text = action.name;
@@ -26,16 +28,23 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
     {
         action.UseAction(CombatManager.manager.PlayerCharacter);
         renderer.color = uiData.selectColor;
-        renderer.DOColor(uiData.hoverColor, uiData.selectLerpSpeed);
+        TweenColor(uiData.hoverColor, uiData.selectLerpSpeed);
     }
     
     public void OnPointerEnter(PointerEventData data)
     {
-        renderer.DOColor(uiData.hoverColor, uiData.hoverLerpSpeed);
+        TweenColor(uiData.hoverColor, uiData.hoverLerpSpeed);
     }
     
     public void OnPointerExit(PointerEventData data)
     {
-        renderer.DOColor(uiData.defaultColor, uiData.hoverLerpSpeed);
+        TweenColor(uiData.defaultColor, uiData.hoverLerpSpeed);
+    }
+    
+    private void TweenColor(Color endValue, float lerpSpeed)
+    {
+        sequence.Kill();
+        sequence = DOTween.Sequence();
+        sequence.Append(renderer.DOColor(endValue, lerpSpeed));
     }
 }

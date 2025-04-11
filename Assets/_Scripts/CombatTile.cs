@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class CombatTile : MonoBehaviour
 {
     [SerializeField] private UIUnivarsalData uiData;
+    private Sequence sequence;
     private SpriteRenderer renderer;
 
     [NonSerialized] public Character occupant = null;
@@ -14,16 +15,17 @@ public class CombatTile : MonoBehaviour
     {
         renderer = GetComponentInChildren<SpriteRenderer>();
         renderer.color = uiData.defaultColor;
+        sequence = DOTween.Sequence();
     }
 
     private void OnMouseEnter()
     {
-        renderer.DOColor(uiData.hoverColor, uiData.hoverLerpSpeed);
+        TweenColor(uiData.hoverColor, uiData.hoverLerpSpeed);
     }
 
     private void OnMouseExit()
     {
-        renderer.DOColor(uiData.defaultColor, uiData.hoverLerpSpeed);
+        TweenColor(uiData.defaultColor, uiData.hoverLerpSpeed);
     }
     
     public Vector2 GetCombatTilePos()
@@ -34,7 +36,7 @@ public class CombatTile : MonoBehaviour
     public void AttackTile(int damage)
     {
         renderer.color = uiData.hurtColor;
-        renderer.DOColor(uiData.defaultColor, uiData.outOfHurtLerpSpeed);
+        TweenColor(uiData.defaultColor, uiData.outOfHurtLerpSpeed);
         if (occupant is not null)
             occupant.TakeDamage(damage);
     }
@@ -42,5 +44,12 @@ public class CombatTile : MonoBehaviour
     public bool Occupied()
     {
         return occupant is not null;
+    }
+
+    private void TweenColor(Color endValue, float lerpSpeed)
+    {
+        sequence.Kill();
+        sequence = DOTween.Sequence();
+        sequence.Append(renderer.DOColor(endValue, lerpSpeed));
     }
 }
