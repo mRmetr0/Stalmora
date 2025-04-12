@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using DG.Tweening;
 using NaughtyAttributes;
 using Unity.Mathematics;
@@ -15,6 +16,19 @@ public class Character : MonoBehaviour
     [SerializeField] private int maxBlock;
     private int blockHealth = 0;
     
+    [Space(15)]
+    [MinMaxSlider(-3, 3)]
+    [SerializeField] private Vector2Int moveRange;
+    
+    [Space(5)]
+    [SerializeField] private CombatAction action1;
+    [SerializeField] private CombatAction action2;
+    [SerializeField] private CombatAction action3;
+    [SerializeField] private CombatAction action4;
+    [SerializeField] private CombatAction action5;
+    private CombatAction[] actions;
+    
+    [Header("Misc")]
     [ReadOnly] public int tilePos;
     [ReadOnly] public bool facingRight = true;
 
@@ -26,6 +40,9 @@ public class Character : MonoBehaviour
         
         //TODO: Have health remain between games
         health = maxHealth;
+        //TODO: have actions be selectable from a list
+        actions = new [] {action1,  action2, action3, action4, action5};
+        actions = actions.Where(x => x != null).ToArray();
     }
 
     public void HealHealth(int value)
