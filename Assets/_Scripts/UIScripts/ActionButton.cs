@@ -1,5 +1,7 @@
 using System;
+using System.Runtime.InteropServices;
 using DG.Tweening;
+using NaughtyAttributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,7 +9,20 @@ using UnityEngine.UI;
 
 public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
+
+    [SerializeField] private bool builtIn = false;
+    
+    [HideIf("builtIn")]
     [SerializeField] private CombatAction action;
+    
+    //Variables for built in actions
+    [ShowIf("builtIn")] 
+    [SerializeField] private string actionName;
+    [ShowIf("builtIn")]
+    [SerializeField] private string actionDesc;
+    [ShowIf("builtIn")] 
+    [SerializeField] private CombatAction.Effect[] actionEffects;
+    
 
     [SerializeField] private UIUnivarsalData uiData;
     private Sequence sequence;
@@ -17,11 +32,20 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
     {
         renderer = GetComponent<Image>();
         sequence = DOTween.Sequence();
-        
-        TMP_Text label = GetComponentInChildren<TMP_Text>();
-        label.text = action.name;
+        HandleActionSetUp();
         
         OnPointerExit(null);
+    }
+
+    private void HandleActionSetUp()
+    {
+        if (builtIn)
+        {
+            action = ScriptableObject.CreateInstance<CombatAction>();
+            action.Init(actionName, actionDesc, false, actionEffects, actionEffects);
+        }
+        TMP_Text label = GetComponentInChildren<TMP_Text>();
+        label.text = action.name;
     }
 
     public void OnPointerDown(PointerEventData data)

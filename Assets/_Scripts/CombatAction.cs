@@ -12,6 +12,15 @@ public class CombatAction : ScriptableObject
     public Effect[] effects;
     public Effect[] effectsPlus;
 
+    public void Init(string _name, string _description, bool _isPlus, Effect[] _effects, Effect[] _effectsPlus)
+    {
+        name = _name;
+        description = _description;
+        isPlus = _isPlus;
+        effects = _effects;
+        effectsPlus = _effectsPlus;
+    }
+
     public void UseAction(Character self)
     {
         Effect[] currentEffects = isPlus ? effectsPlus : effects;
