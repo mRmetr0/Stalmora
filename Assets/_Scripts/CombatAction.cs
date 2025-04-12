@@ -29,14 +29,15 @@ public class CombatAction : ScriptableObject
             Damage,
             Heal,
             Block,
-            Move
+            Move,
+            Switch,
         }
 
         public Type type;
-        [Tooltip("The amount that this type will do")]
+        [Tooltip("The amount that this type will do")] [AllowNesting] [HideIf("type", Type.Switch)]
         public int value;
-        [ShowIf("type", Type.Damage)] [AllowNesting]
-        public int[] range;
+        [ShowIf("type", Type.Damage)] 
+        public int[] attackRange;
 
         /// <summary>
         /// 
@@ -60,6 +61,9 @@ public class CombatAction : ScriptableObject
                 case(Type.Move):
                     CombatManager.manager.MoveCharacter(self, value);
                     break;
+                case(Type.Switch):
+                    self.SwitchDirection();
+                    break;
             }
             return true;
         }
@@ -67,9 +71,9 @@ public class CombatAction : ScriptableObject
         private void HandleAttack(Character attacker)
         {
             int startPos = attacker.tilePos;
-            for (int i = 0; i < range.Length; i++)
+            for (int i = 0; i < attackRange.Length; i++)
             {
-                int pos = startPos + (range[i] * (attacker.facingRight ? 1 : -1));
+                int pos = startPos + (attackRange[i] * (attacker.facingRight ? 1 : -1));
                 CombatTile toAttack = CombatManager.manager.GetTile(pos);
                 if (toAttack is null) continue;
                 toAttack.AttackTile(value);

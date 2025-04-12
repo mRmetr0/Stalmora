@@ -38,6 +38,14 @@ public class Character : MonoBehaviour
         blockHealth = Mathf.Min(blockHealth + amount, maxBlock);
     }
 
+    public void SwitchDirection()
+    {
+        facingRight = !facingRight;
+        int xMod = facingRight ? 1 : -1;
+        Vector3 ogScale = transform.localScale;
+        transform.localScale = new Vector3(Mathf.Abs(ogScale.x) * xMod, ogScale.y, ogScale.z); 
+    }
+
     public void TakeDamage(int damage)
     {
         //First have damage go through block:
