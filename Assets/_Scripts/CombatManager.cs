@@ -1,40 +1,43 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security;
-using DG.Tweening;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour
 {
+    public enum EnemyBehaviour
+    {
+        Random,
+        Controllable,
+        Agressive, //TODO: create
+        Passive //TODO: create
+    }
+
     public static CombatManager manager;
-    public Character PlayerCharacter;
-    public Character EnemyCharacter;
+    
+    [SerializeField] private Character player; //TODO: load in player from overworld data
+    [SerializeField] private Character enemy; //TODO: load in enemy from overworld data
+    [SerializeField] private EnemyBehaviour behaviour;
 
-    [SerializeField] private GameObject tileContainer;
-    private CombatTile[] tiles;
-
-    [Header("Lerp Data")] 
-    [SerializeField] private float moveLerpSpeed;
+    [SerializeField] private CombatUI ui;
+    private bool isPlayerTurn = true;
+    private int actions = 2;
 
     private void Awake()
     {
+        //Handle singleton
         if (manager != null)
         {
-            Debug.LogError("TOO MANY MANAGERS!!");
+            Debug.LogError("MORE THEN ONE COMBAT MANAGER!!!");
             Destroy(gameObject);
             return;
         }
-
         manager = this;
 
-        SetUpTileLayout();
-        tiles = tileContainer.GetComponentsInChildren<CombatTile>();
+        if (ui is null) ui = FindAnyObjectByType<CombatUI>();
+    }
 
-        StartCoroutine(LateAwake());
+    private void Start()
+    {
+        StartPlayerTurn();
     }
 
     private void OnDestroy()
@@ -42,71 +45,39 @@ public class CombatManager : MonoBehaviour
         if (manager == this) manager = null;
     }
 
-    private IEnumerator LateAwake() //TODO: Have layout group set up in code instead of waiting a frame
+    private void StartPlayerTurn()
     {
-        yield return new WaitForEndOfFrame();
-        PlaceCharacter(PlayerCharacter, 1);
-        PlaceCharacter(EnemyCharacter, 3);
+        ui.gameObject.SetActive(true);
+        ui.SetUI(player);
     }
 
-    private void Update()
+    public void StartEnemyTurn()
     {
-        //DEBUG TOOLS
-        int move = (Input.GetKey(KeyCode.LeftShift)) ? 2 : 1;
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (behaviour == EnemyBehaviour.Controllable)
         {
-            MoveCharacter(PlayerCharacter, -move);   
-        }
-        
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            MoveCharacter(PlayerCharacter, move);   
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            PlayerCharacter.TakeDamage(1);
+            ui.gameObject.SetActive(true);
+            ui.SetUI(enemy);
         }
     }
-    
-    private void SetUpTileLayout()
-    {
-        HorizontalLayoutGroup group = tileContainer.GetComponent<HorizontalLayoutGroup>();
-        group.CalculateLayoutInputHorizontal();
-        group.SetLayoutHorizontal();
-        group.CalculateLayoutInputVertical();
-        group.SetLayoutVertical();
-    }
 
-    public CombatTile GetTile(int posIndex)
+    public void EndAction()
     {
-        if (posIndex < 0 || posIndex >= tiles.Length) return null;
-        return tiles[posIndex];
-    }
-
-    public void MoveCharacter(Character character, int direction)
-    {
-        int oldPos = character.tilePos;
-        int nextPos = character.tilePos;
-        for (int i = 1; i <= Mathf.Abs(direction); i++)
+        //Count actions
+        actions--;
+        if (actions <= 0)
         {
-            nextPos = character.tilePos + direction / Mathf.Abs(direction) * i;
-            //Check if can move
-            if (nextPos < 0 || nextPos >= tiles.Length || tiles[nextPos].Occupied()) return; //CANNOT MOVE
+            Debug.Log("END OF TURN");
+            isPlayerTurn = !isPlayerTurn;
+            actions = 2;
         }
-        //Move and update data
-        tiles[oldPos].occupant = null;
-        character.tilePos = nextPos;
-        character.transform.DOMove(tiles[nextPos].GetCombatTilePos(), moveLerpSpeed);
-        tiles[nextPos].occupant = character;
-    }
-
-    private void PlaceCharacter(Character character, int newPos)
-    {
-        if (newPos < 0 || newPos >= tiles.Length) return;
-        tiles[character.tilePos].occupant = null;
-        character.tilePos = newPos;
-        character.transform.position = tiles[newPos].GetCombatTilePos();
-        tiles[newPos].occupant = character;
+        //Set turn
+        if (isPlayerTurn)
+        {
+            StartPlayerTurn();
+        }
+        else
+        {
+            StartEnemyTurn();
+        }
     }
 }

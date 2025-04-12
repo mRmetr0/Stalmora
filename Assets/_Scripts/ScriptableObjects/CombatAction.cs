@@ -68,7 +68,7 @@ public class CombatAction : ScriptableObject
                     self.GetBlock(value);
                     break;
                 case(Type.Move):
-                    CombatManager.manager.MoveCharacter(self, value);
+                    TileManager.manager.MoveCharacter(self, value);
                     break;
                 case(Type.Switch):
                     self.SwitchDirection();
@@ -83,7 +83,7 @@ public class CombatAction : ScriptableObject
             for (int i = 0; i < attackRange.Length; i++)
             {
                 int pos = startPos + (attackRange[i] * (attacker.facingRight ? 1 : -1));
-                CombatTile toAttack = CombatManager.manager.GetTile(pos);
+                CombatTile toAttack = TileManager.manager.GetTile(pos);
                 if (toAttack is null) continue;
                 toAttack.AttackTile(value);
             }

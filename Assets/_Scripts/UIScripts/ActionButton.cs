@@ -37,22 +37,30 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
         OnPointerExit(null);
     }
 
-    private void HandleActionSetUp()
+    public void HandleActionSetUp(CombatAction _action = null)
     {
+        if (_action is not null)
+        {
+            action = _action;
+        }
+
         if (builtIn)
         {
             action = ScriptableObject.CreateInstance<CombatAction>();
             action.Init(actionName, actionDesc, false, actionEffects, actionEffects);
         }
+        if (action is null) return;
+        
         TMP_Text label = GetComponentInChildren<TMP_Text>();
         label.text = action.name;
     }
 
     public void OnPointerDown(PointerEventData data)
     {
-        action.UseAction(CombatManager.manager.PlayerCharacter);
+        action.UseAction(TileManager.manager.PlayerCharacter);
         renderer.color = uiData.selectColor;
         TweenColor(uiData.hoverColor, uiData.selectLerpSpeed);
+        CombatManager.manager.EndAction();
     }
     
     public void OnPointerEnter(PointerEventData data)

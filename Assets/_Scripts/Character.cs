@@ -20,6 +20,7 @@ public class Character : MonoBehaviour
     [Space(15)]
     [MinMaxSlider(-3, 3)]
     [SerializeField] private Vector2Int moveRange;
+    public Vector2Int MoveRange => moveRange;
     
     [Space(5)]
     [SerializeField] private CombatAction action1;
@@ -28,6 +29,7 @@ public class Character : MonoBehaviour
     [SerializeField] private CombatAction action4;
     [SerializeField] private CombatAction action5;
     private CombatAction[] actions;
+    public CombatAction[] Actions => actions;
     
     [Header("Misc")]
     [ReadOnly] public int tilePos;
