@@ -5,10 +5,11 @@ using NaughtyAttributes;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEngine.Serialization;
 
 public class Character : MonoBehaviour
 {
-    [SerializeField] private UIUnivarsalData uiData;
+    [SerializeField] private ObjectData objData;
     [Space(15)]
     
     [SerializeField] private int maxHealth;
@@ -80,8 +81,8 @@ public class Character : MonoBehaviour
             Die();
             return;
         }
-        renderer.color = uiData.hurtColor;
-        renderer.DOColor(Color.white, uiData.outOfHurtLerpSpeed);
+        renderer.color = objData.hurtColor;
+        renderer.DOColor(Color.white, objData.outOfHurtLerpSpeed);
     }
 
     private void Die()

@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 
 public class CombatTile : MonoBehaviour
 {
-    [SerializeField] private UIUnivarsalData uiData;
+    [SerializeField] private UIData uiData;
+    [SerializeField] private ObjectData objData;
     private Sequence sequence;
     private SpriteRenderer renderer;
 
@@ -35,8 +36,8 @@ public class CombatTile : MonoBehaviour
 
     public void AttackTile(int damage)
     {
-        renderer.color = uiData.hurtColor;
-        TweenColor(uiData.defaultColor, uiData.outOfHurtLerpSpeed);
+        renderer.color = objData.hurtColor;
+        TweenColor(uiData.defaultColor, objData.outOfHurtLerpSpeed);
         if (occupant is not null)
             occupant.TakeDamage(damage);
     }

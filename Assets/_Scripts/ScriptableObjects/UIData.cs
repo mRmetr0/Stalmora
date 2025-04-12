@@ -1,11 +1,8 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "UIUnivarsalData", menuName = "Scriptable Objects/UIUnivarsalData")]
-public class UIUnivarsalData : ScriptableObject
+[CreateAssetMenu(fileName = "UIData", menuName = "Data/UIData")]
+public class UIData : ScriptableObject
 {
-    public Color hurtColor;
-    public float outOfHurtLerpSpeed;
-    
     [Header("Interactable coloring")]
     //Colors and lerp speed for ui buttons
     public Color defaultColor;

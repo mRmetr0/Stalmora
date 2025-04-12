@@ -24,7 +24,7 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
     [SerializeField] private CombatAction.Effect[] actionEffects;
     
 
-    [SerializeField] private UIUnivarsalData uiData;
+    [SerializeField] private UIData uiData;
     private Sequence sequence;
     private Image renderer;
 
