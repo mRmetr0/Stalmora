@@ -31,22 +31,18 @@ public class TileManager : MonoBehaviour
 
         manager = this;
 
-        SetUpTileLayout();
+        // SetUpTileLayout();
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)tileContainer.transform);
         tiles = tileContainer.GetComponentsInChildren<CombatTile>();
 
-        StartCoroutine(LateAwake());
+        // StartCoroutine(LateAwake());
+        PlaceCharacter(PlayerCharacter, 1);
+        PlaceCharacter(EnemyCharacter, 3);
     }
 
     private void OnDestroy()
     {
         if (manager == this) manager = null;
-    }
-
-    private IEnumerator LateAwake() //TODO: Have layout group set up in code instead of waiting a frame
-    {
-        yield return new WaitForEndOfFrame();
-        PlaceCharacter(PlayerCharacter, 1);
-        PlaceCharacter(EnemyCharacter, 3);
     }
 
     // private void Update()

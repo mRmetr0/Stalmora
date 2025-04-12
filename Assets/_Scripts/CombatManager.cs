@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour
 {
@@ -58,6 +59,7 @@ public class CombatManager : MonoBehaviour
             ui.gameObject.SetActive(true);
             ui.SetUI(enemy);
         }
+        EndAction();
     }
 
     public void EndAction()
@@ -66,11 +68,11 @@ public class CombatManager : MonoBehaviour
         actions--;
         if (actions <= 0)
         {
-            Debug.Log("END OF TURN");
             isPlayerTurn = !isPlayerTurn;
             actions = 2;
         }
         //Set turn
+        Debug.Log(isPlayerTurn);
         if (isPlayerTurn)
         {
             StartPlayerTurn();

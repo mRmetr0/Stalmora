@@ -561,6 +561,8 @@ MonoBehaviour:
   - {fileID: 633298826}
   - {fileID: 661163301}
   - {fileID: 477851029}
+  layoutGroups:
+  - {fileID: 1485756936}
 --- !u!1 &459354589
 GameObject:
   m_ObjectHideFlags: 0

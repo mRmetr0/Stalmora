@@ -1,30 +1,36 @@
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CombatUI : MonoBehaviour
 {
     [SerializeField] private GameObject[] moveLeftButtons;
     [SerializeField] private GameObject[] moveRightButtons;
     [SerializeField] private ActionButton[] actionButtons;
+    [SerializeField] private RectTransform[] layoutGroups;
     public void SetUI(Character UITarget)
     {
-        //Set movement buttons:
-        for (int i = 0; i < moveRightButtons.Length; i++)
+        GameObject[] forwardButtons = UITarget.facingRight ? moveRightButtons : moveLeftButtons;
+        GameObject[] backButtons = UITarget.facingRight ? moveLeftButtons : moveRightButtons;
+        Debug.Log($"{UITarget.facingRight}, f: {forwardButtons == moveRightButtons}, b:{backButtons == moveLeftButtons}");
+        //HandleForwardButtons:
+        for (int i = 0; i < forwardButtons.Length; i++)
         {
             bool allowed = i + 1 <= UITarget.MoveRange.y;
-            Debug.Log($"{i+1} <= {UITarget.MoveRange.y} = {allowed}");
-            moveRightButtons[i].SetActive(allowed);
+            forwardButtons[i].SetActive(allowed);
         }
-
-        Debug.Log("--------------");
-        for (int i = 0; i < moveLeftButtons.Length; i++)
+        //HandleBackwardsButtons:
+        for (int i = 0; i < backButtons.Length; i++)
         {
             bool allowed = i + 1 <= -UITarget.MoveRange.x;
-            Debug.Log($"{i + 1} < {-UITarget.MoveRange.x} = {allowed}");
-            moveLeftButtons[i].SetActive(allowed);
-            Debug.Log($"{i} active? {allowed}");
+            backButtons[i].SetActive(allowed);
         }
-        
+
+        foreach (RectTransform group in layoutGroups)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(group);
+        }
+
         //Set action buttons:
         for (int i = 0; i < actionButtons.Length; i++)
         {
