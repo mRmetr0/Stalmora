@@ -10,6 +10,7 @@ using UnityEngine.Serialization;
 public class Character : MonoBehaviour
 {
     [SerializeField] private ObjectData objData;
+    private Sequence sequence;
     [Space(15)]
     
     [SerializeField] private int maxHealth;
@@ -40,6 +41,7 @@ public class Character : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        sequence = DOTween.Sequence();
         
         //TODO: Have health remain between games
         health = maxHealth;
@@ -84,13 +86,13 @@ public class Character : MonoBehaviour
             return;
         }
         spriteRenderer.color = objData.hurtColor;
-        spriteRenderer.DOColor(Color.white, objData.outOfHurtLerpSpeed);
+        TweenColor(Color.white, objData.outOfHurtLerpSpeed);
     }
 
     private void Die()
     {
-        //TODO: remove character from turn order.
-        Debug.Log($"{name} HAS DIED");
+        sequence.Kill();
+        CombatManager.manager.RemoveCharacter(this);
     }
 
     public bool IsFacing(Character target)
@@ -103,5 +105,12 @@ public class Character : MonoBehaviour
     public int GetDistance(Character target)
     {
         return Mathf.Abs(tilePos - target.tilePos) - 1;
+    }
+    
+    private void TweenColor(Color endValue, float lerpSpeed)
+    {
+        sequence.Kill();
+        sequence = DOTween.Sequence();
+        sequence.Append(spriteRenderer.DOColor(endValue, lerpSpeed));
     }
 }

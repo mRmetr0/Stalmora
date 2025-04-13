@@ -20,7 +20,10 @@ public class CombatManager : MonoBehaviour
     [SerializeField] private CombatUI ui;
     private bool isPlayerTurn = true;
     private int actions = 2;
+    private bool combatOver = false;
 
+    public bool CombatOver => combatOver;
+    
     private void Awake()
     {
         //Handle singleton
@@ -62,6 +65,7 @@ public class CombatManager : MonoBehaviour
 
     public void EndAction()
     {
+        if (combatOver) return;
         //Count actions
         actions--;
         if (actions <= 0)
@@ -78,6 +82,25 @@ public class CombatManager : MonoBehaviour
         {
             StartCoroutine(StartEnemyTurn());
         }
+    }
+
+    public void RemoveCharacter(Character toRemove)
+    {
+        if (toRemove == player)
+        {
+            //TODO: Go to game over screen
+            Debug.Log("GameOver");
+        }
+
+        if (toRemove == enemy)
+        {
+            //TODO: Go to upgrade screen
+            Debug.Log("ENEMY DESTROYED");
+        }
+        ui.gameObject.SetActive(false);
+        TileManager.manager.GetTile(enemy.tilePos).occupant = null;
+        Destroy(toRemove.gameObject);
+        combatOver = true;
     }
 
     public class EnemyBehaviour

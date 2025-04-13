@@ -91,7 +91,7 @@ public class CombatAction : ScriptableObject
                     HandleMoveTarget(self, -value);
                     break;
             }
-            return isExecuted || uninterruptable;
+            return isExecuted || uninterruptable || CombatManager.manager.CombatOver;
         }
 
         private void HandleAttack(Character attacker)
