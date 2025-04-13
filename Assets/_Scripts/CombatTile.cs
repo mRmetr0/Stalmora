@@ -8,14 +8,14 @@ public class CombatTile : MonoBehaviour
     [SerializeField] private UIData uiData;
     [SerializeField] private ObjectData objData;
     private Sequence sequence;
-    private SpriteRenderer renderer;
+    private SpriteRenderer spriteRenderer;
 
     [NonSerialized] public Character occupant = null;
 
     private void Awake()
     {
-        renderer = GetComponentInChildren<SpriteRenderer>();
-        renderer.color = uiData.defaultColor;
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        spriteRenderer.color = uiData.defaultColor;
         sequence = DOTween.Sequence();
     }
 
@@ -36,7 +36,7 @@ public class CombatTile : MonoBehaviour
 
     public void AttackTile(int damage)
     {
-        renderer.color = objData.hurtColor;
+        spriteRenderer.color = objData.hurtColor;
         TweenColor(uiData.defaultColor, objData.outOfHurtLerpSpeed);
         if (occupant is not null)
             occupant.TakeDamage(damage);
@@ -51,6 +51,6 @@ public class CombatTile : MonoBehaviour
     {
         sequence.Kill();
         sequence = DOTween.Sequence();
-        sequence.Append(renderer.DOColor(endValue, lerpSpeed));
+        sequence.Append(spriteRenderer.DOColor(endValue, lerpSpeed));
     }
 }

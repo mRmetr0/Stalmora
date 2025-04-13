@@ -35,11 +35,11 @@ public class Character : MonoBehaviour
     [ReadOnly] public int tilePos;
     [ReadOnly] public bool facingRight = true;
 
-    private SpriteRenderer renderer;
+    private SpriteRenderer spriteRenderer;
 
     private void Awake()
     {
-        renderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         
         //TODO: Have health remain between games
         health = maxHealth;
@@ -83,8 +83,8 @@ public class Character : MonoBehaviour
             Die();
             return;
         }
-        renderer.color = objData.hurtColor;
-        renderer.DOColor(Color.white, objData.outOfHurtLerpSpeed);
+        spriteRenderer.color = objData.hurtColor;
+        spriteRenderer.DOColor(Color.white, objData.outOfHurtLerpSpeed);
     }
 
     private void Die()

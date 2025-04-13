@@ -12,7 +12,6 @@ public class CombatUI : MonoBehaviour
     {
         GameObject[] forwardButtons = UITarget.facingRight ? moveRightButtons : moveLeftButtons;
         GameObject[] backButtons = UITarget.facingRight ? moveLeftButtons : moveRightButtons;
-        Debug.Log($"{UITarget.facingRight}, f: {forwardButtons == moveRightButtons}, b:{backButtons == moveLeftButtons}");
         //HandleForwardButtons:
         for (int i = 0; i < forwardButtons.Length; i++)
         {

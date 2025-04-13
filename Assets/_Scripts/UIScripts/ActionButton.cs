@@ -21,17 +21,19 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
     [ShowIf("builtIn")]
     [SerializeField] private string actionDesc;
     [ShowIf("builtIn")] 
-    [SerializeField] private CombatAction.Effect[] actionEffects;
+    [SerializeField] private CombatAction.Effect actionEffect;
     
 
     [SerializeField] private UIData uiData;
     private Sequence sequence;
-    private Image renderer;
+    private Image spriteRenderer;
+    private TMP_Text label;
 
     private void Awake()
     {
-        renderer = GetComponent<Image>();
+        spriteRenderer = GetComponent<Image>();
         sequence = DOTween.Sequence();
+        label = GetComponentInChildren<TMP_Text>();
         HandleActionSetUp();
         
         OnPointerExit(null);
@@ -47,18 +49,17 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
         if (builtIn)
         {
             action = ScriptableObject.CreateInstance<CombatAction>();
-            action.Init(actionName, actionDesc, false, actionEffects, actionEffects);
+            action.SimpleInit(actionName, actionDesc, actionEffect);
         }
         if (action is null) return;
         
-        TMP_Text label = GetComponentInChildren<TMP_Text>();
-        label.text = action.name;
+        label.text = action.title;
     }
 
     public void OnPointerDown(PointerEventData data)
     {
         action.UseAction(TileManager.manager.PlayerCharacter);
-        renderer.color = uiData.selectColor;
+        spriteRenderer.color = uiData.selectColor;
         TweenColor(uiData.hoverColor, uiData.selectLerpSpeed);
         CombatManager.manager.EndAction();
     }
@@ -77,6 +78,6 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
     {
         sequence.Kill();
         sequence = DOTween.Sequence();
-        sequence.Append(renderer.DOColor(endValue, lerpSpeed));
+        sequence.Append(spriteRenderer.DOColor(endValue, lerpSpeed));
     }
 }

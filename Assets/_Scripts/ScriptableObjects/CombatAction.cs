@@ -1,24 +1,23 @@
 using System;
 using NaughtyAttributes;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "Action", menuName = "Scriptable Objects/Action")]
 public class CombatAction : ScriptableObject
 {
-    public string name;
+    public string title;
     [TextArea] 
     public string description;
     public bool isPlus = false;
     public Effect[] effects;
     public Effect[] effectsPlus;
 
-    public void Init(string _name, string _description, bool _isPlus, Effect[] _effects, Effect[] _effectsPlus)
+    public void SimpleInit(string _name, string _description, Effect _effect)
     {
-        name = _name;
+        title = _name;
         description = _description;
-        isPlus = _isPlus;
-        effects = _effects;
-        effectsPlus = _effectsPlus;
+        effects = new [] { _effect };
     }
 
     public void UseAction(Character self)
@@ -47,6 +46,14 @@ public class CombatAction : ScriptableObject
         public int value;
         [ShowIf("type", Type.Damage)] 
         public int[] attackRange;
+
+        public Effect(Type _type, int _value, int[] _attackRange = null)
+        {
+            type = _type;
+            value = _value;
+            if (_attackRange != null)
+                attackRange = _attackRange;
+        }
 
         /// <summary>
         /// 
