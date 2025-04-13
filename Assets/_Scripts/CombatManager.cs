@@ -36,7 +36,7 @@ public class CombatManager : MonoBehaviour
     private void Start()
     {
         if (ui is null) ui = FindAnyObjectByType<CombatUI>();
-        behaviour = new EnemyBehaviour(behaviourType, enemy);
+        behaviour = new EnemyBehaviour(enemy, player, behaviourType);
         StartPlayerTurn();
     }
 
@@ -92,13 +92,22 @@ public class CombatManager : MonoBehaviour
         }
 
         private BehaviourType type;
-        private Character character;
+        private Character enemy;
+        private Character target;
         private CombatAction[] actions;
+        
+        //General movement
+        private CombatAction swap;
+        private CombatAction moveR;
+        private CombatAction moveL;
 
-        public EnemyBehaviour(BehaviourType _type, Character _character)
+
+        public EnemyBehaviour(Character _enemy, Character _target, BehaviourType _type)
         {
             type = _type;
-            character = _character;
+            enemy = _enemy;
+            target = _target;
+            SetUpGeneralActions();
             actions = GetAllActions();
         }
 
@@ -106,15 +115,42 @@ public class CombatManager : MonoBehaviour
         {
             switch (type)
             {
+                case(BehaviourType.Agressive):
+                    Debug.Log("AGRESSIVE");
+                    return GetAgressiveAction();
+                case(BehaviourType.Random):
                 default:
+                    Debug.Log("RANDOM");
                     return GetRandomAction();
             }
+        }
+
+        private CombatAction GetAgressiveAction() //TODO: make aggression based off of best move
+        {
+            //Turn to target if facing away
+            if (!enemy.IsFacing(target)) return swap;
+            
+            int dist = enemy.GetDistance(target);
+            //Attack if close enough
+            if (dist == 0) return enemy.Actions[0];
+            //Move closer if not
+            return enemy.facingRight ? moveR : moveL;
         }
 
         private CombatAction GetRandomAction()
         {
             int randomN = random.Next(actions.Length);
             return actions[randomN];
+        }
+
+        private void SetUpGeneralActions()
+        {
+            swap = ScriptableObject.CreateInstance<CombatAction>();
+            swap.SimpleInit("", "", new CombatAction.Effect(CombatAction.Effect.Type.Switch, 0));
+            moveR = ScriptableObject.CreateInstance<CombatAction>();
+            moveR.SimpleInit("", "", new CombatAction.Effect(CombatAction.Effect.Type.Move, 1));
+            moveL = ScriptableObject.CreateInstance<CombatAction>();
+            moveL.SimpleInit("", "", new CombatAction.Effect(CombatAction.Effect.Type.Move, -1));
         }
 
         private CombatAction[] GetAllActions()
@@ -129,17 +165,11 @@ public class CombatManager : MonoBehaviour
             //     list.Append(action);
             // }
             
-            CombatAction move1 = ScriptableObject.CreateInstance<CombatAction>();
-            move1.SimpleInit("", "", new CombatAction.Effect(CombatAction.Effect.Type.Move, 1));
-            list.Add(move1);
-            CombatAction move2 = ScriptableObject.CreateInstance<CombatAction>();
-            move2.SimpleInit("", "", new CombatAction.Effect(CombatAction.Effect.Type.Move, -1));
-            list.Add(move2);
-            CombatAction swap = ScriptableObject.CreateInstance<CombatAction>();
-            swap.SimpleInit("", "", new CombatAction.Effect(CombatAction.Effect.Type.Switch, 0));
             list.Add(swap);
+            list.Add(moveR);
+            list.Add(moveL);
 
-            list.AddRange(character.Actions);
+            list.AddRange(enemy.Actions);
 
             return list.ToArray();
         }

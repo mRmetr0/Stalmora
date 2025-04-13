@@ -92,4 +92,16 @@ public class Character : MonoBehaviour
         //TODO: remove character from turn order.
         Debug.Log($"{name} HAS DIED");
     }
+
+    public bool IsFacing(Character target)
+    {
+        return (facingRight && tilePos < target.tilePos) || (!facingRight && tilePos > target.tilePos);
+    }
+
+    /// <param name="target">Other character to measure the difference between</param>
+    /// <returns>Amount of tiles between target and this character</returns>
+    public int GetDistance(Character target)
+    {
+        return Mathf.Abs(tilePos - target.tilePos) - 1;
+    }
 }

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eacc1d39fa6a7fa4891650c4b88afb8e, type: 3}
-  m_Name: Attack 1, -1
+  m_Name: Attack -1
   m_EditorClassIdentifier: 
-  title: Attack2
+  title: Attack -1
   description: 
   isPlus: 0
   effects:
   - type: 0
     value: 1
-    attackRange: 01000000ffffffff
+    attackRange: ffffffff
   effectsPlus: []
