@@ -39,9 +39,12 @@ public class CombatAction : ScriptableObject
             Block,
             Move,
             Switch,
+            Push, 
+            Pull
         }
 
         public Type type;
+        public bool uninterruptable;
         [Tooltip("The amount that this type will do")] [AllowNesting] [HideIf("type", Type.Switch)]
         public int value;
         [ShowIf("type", Type.Damage)] 
@@ -80,8 +83,14 @@ public class CombatAction : ScriptableObject
                 case(Type.Switch):
                     self.SwitchDirection();
                     break;
+                case(Type.Push):
+                    HandleMoveTarget(self, value);
+                    break;
+                case(Type.Pull):    
+                    HandleMoveTarget(self, -value);
+                    break;
             }
-            return true;
+            return true; //TODO: check after every effect if it's fully executable
         }
 
         private void HandleAttack(Character attacker)
@@ -93,6 +102,24 @@ public class CombatAction : ScriptableObject
                 CombatTile toAttack = TileManager.manager.GetTile(pos);
                 if (toAttack is null) continue;
                 toAttack.AttackTile(value);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attacker"></param>
+        /// <param name="moveValue">Amount the target should move, positive is push, negative is pull</param>
+        private void HandleMoveTarget(Character attacker, int moveValue)
+        {
+            int startPos = attacker.tilePos;
+            moveValue *= (attacker.facingRight ? 1 : -1);
+            for (int i = 0; i < attackRange.Length; i++)
+            {
+                int pos = startPos + (attackRange[i] * (attacker.facingRight ? 1 : -1));
+                Character toAttack = TileManager.manager.GetTile(pos).occupant;
+                if (toAttack is null) continue;
+                TileManager.manager.MoveCharacter(toAttack, moveValue);
             }
         }
     }

@@ -461,7 +461,7 @@ GameObject:
   - component: {fileID: 390551605}
   - component: {fileID: 390551609}
   m_Layer: 5
-  m_Name: PlayerUI
+  m_Name: CombatUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1977,7 +1977,7 @@ MonoBehaviour:
   action1: {fileID: 11400000, guid: 324bb884ec204c041a8a7fb74b3fd49e, type: 2}
   action2: {fileID: 11400000, guid: 25818adff2a1eec4894fe3565ede05d6, type: 2}
   action3: {fileID: 11400000, guid: 1313703def2ef9e4688a384d497f72ff, type: 2}
-  action4: {fileID: 0}
+  action4: {fileID: 11400000, guid: 347fa86e25722bf4d8d1e0d5eaf4d48e, type: 2}
   action5: {fileID: 0}
   tilePos: 0
   facingRight: 1
@@ -2398,7 +2398,7 @@ GameObject:
   - component: {fileID: 1485756938}
   - component: {fileID: 1485756937}
   m_Layer: 5
-  m_Name: ButtonHolder
+  m_Name: PlayerUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
