@@ -87,7 +87,7 @@ public class CombatManager : MonoBehaviour
             Random,
             Controllable, //TODO: Create
             //TODO: Implement smart enemy behaviour
-            Agressive, //TODO: create
+            Agressive, 
             Passive //TODO: create
         }
 

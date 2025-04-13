@@ -66,6 +66,7 @@ public class CombatAction : ScriptableObject
         /// <returns>If the skill was succesful. Might stop the entire action if unable to complete fully</returns>
         public bool ActivateEffect(Character self)
         {
+            bool isExecuted = true;
             switch (type)
             {
                 case(Type.Damage):
@@ -78,7 +79,7 @@ public class CombatAction : ScriptableObject
                     self.GetBlock(value);
                     break;
                 case(Type.Move):
-                    TileManager.manager.MoveCharacter(self, value);
+                    isExecuted = TileManager.manager.MoveCharacter(self, value, !uninterruptable);
                     break;
                 case(Type.Switch):
                     self.SwitchDirection();
@@ -90,7 +91,7 @@ public class CombatAction : ScriptableObject
                     HandleMoveTarget(self, -value);
                     break;
             }
-            return true; //TODO: check after every effect if it's fully executable
+            return isExecuted || uninterruptable;
         }
 
         private void HandleAttack(Character attacker)
@@ -119,7 +120,7 @@ public class CombatAction : ScriptableObject
                 int pos = startPos + (attackRange[i] * (attacker.facingRight ? 1 : -1));
                 Character toAttack = TileManager.manager.GetTile(pos).occupant;
                 if (toAttack is null) continue;
-                TileManager.manager.MoveCharacter(toAttack, moveValue);
+                TileManager.manager.MoveCharacter(toAttack, moveValue, !uninterruptable);
             }
         }
     }

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eacc1d39fa6a7fa4891650c4b88afb8e, type: 3}
-  m_Name: Push 1
+  m_Name: Push
   m_EditorClassIdentifier: 
   title: Push
   description: 
@@ -18,6 +18,6 @@ MonoBehaviour:
   effects:
   - type: 5
     uninterruptable: 0
-    value: 2
+    value: 1
     attackRange: 01000000
   effectsPlus: []

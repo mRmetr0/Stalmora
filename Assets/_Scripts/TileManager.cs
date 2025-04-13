@@ -1,11 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security;
 using DG.Tweening;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class TileManager : MonoBehaviour
@@ -64,15 +58,6 @@ public class TileManager : MonoBehaviour
     //         PlayerCharacter.TakeDamage(1);
     //     }
     // }
-    
-    private void SetUpTileLayout()
-    {
-        HorizontalLayoutGroup group = tileContainer.GetComponent<HorizontalLayoutGroup>();
-        group.CalculateLayoutInputHorizontal();
-        group.SetLayoutHorizontal();
-        group.CalculateLayoutInputVertical();
-        group.SetLayoutVertical();
-    }
 
     public CombatTile GetTile(int posIndex)
     {
@@ -80,21 +65,36 @@ public class TileManager : MonoBehaviour
         return tiles[posIndex];
     }
 
-    public void MoveCharacter(Character character, int direction)
+    /// <summary>
+    /// Move character from one tile to another
+    /// </summary>
+    /// <param name="character">Character to move</param>
+    /// <param name="direction">Direction to move</param>
+    /// <param name="onlyIfExecutable">If cant fully move, dont move character at all</param>
+    /// <returns>If movement was able to fully execute</returns>
+    public bool MoveCharacter(Character character, int direction, bool onlyIfExecutable = true)
     {
         int oldPos = character.tilePos;
-        int nextPos = character.tilePos;
+        int nextPos;
+        int pastPos = oldPos;
         for (int i = 1; i <= Mathf.Abs(direction); i++)
         {
             nextPos = character.tilePos + direction / Mathf.Abs(direction) * i;
             //Check if can move
-            if (nextPos < 0 || nextPos >= tiles.Length || tiles[nextPos].Occupied()) return; //CANNOT MOVE
+            if (nextPos < 0 || nextPos >= tiles.Length || tiles[nextPos].Occupied()) //CANNOT MOVE FURTHER
+            {
+                if (onlyIfExecutable) return false;
+                break;
+            }
+
+            pastPos = nextPos;
         }
         //Move and update data
         tiles[oldPos].occupant = null;
-        character.tilePos = nextPos;
-        character.transform.DOMove(tiles[nextPos].GetCombatTilePos(), moveLerpSpeed);
-        tiles[nextPos].occupant = character;
+        character.tilePos = pastPos;
+        character.transform.DOMove(tiles[pastPos].GetCombatTilePos(), moveLerpSpeed);
+        tiles[pastPos].occupant = character;
+        return true;
     }
 
     private void PlaceCharacter(Character character, int newPos)
