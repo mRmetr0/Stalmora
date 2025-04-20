@@ -50,7 +50,6 @@ public class CombatManager : MonoBehaviour
 
     private void StartPlayerTurn()
     {
-        ui.gameObject.SetActive(true);
         ui.SetUI(player);
     }
 
@@ -61,7 +60,7 @@ public class CombatManager : MonoBehaviour
 
     public IEnumerator HandleAction(Character actor, CombatAction action)
     {
-        ui.gameObject.SetActive(false);
+        ui.SetUI(null);
         yield return StartCoroutine(action.UseAction(actor));
         yield return new WaitForSeconds(0.2f);
         EndAction();
@@ -90,18 +89,9 @@ public class CombatManager : MonoBehaviour
 
     public void RemoveCharacter(Character toRemove)
     {
-        if (toRemove == player)
-        {
-            //TODO: Go to game over screen
-            Debug.Log("GameOver");
-        }
+        ui.SetUI(null);
+        ui.SetCombatEndUI(toRemove == enemy);
 
-        if (toRemove == enemy)
-        {
-            //TODO: Go to upgrade screen
-            Debug.Log("ENEMY DESTROYED");
-        }
-        ui.gameObject.SetActive(false);
         TileManager.manager.GetTile(enemy.tilePos).occupant = null;
         Destroy(toRemove.gameObject);
         combatOver = true;

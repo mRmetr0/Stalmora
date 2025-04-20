@@ -91,17 +91,15 @@ public class TileManager : MonoBehaviour
             }
             nextPos = nextPosCalc;
         }
-        //Bother with movement logic only if character can move:
-        if (nextPos != oldPos)
-        {
-            //Move and update data
-            tiles[oldPos].occupant = null;
-            character.tilePos = nextPos;
-            Tween moveTween = character.transform.DOMove(tiles[nextPos].GetCombatTilePos(), moveLerpSpeed);
-            yield return moveTween.WaitForCompletion();
-            tiles[nextPos].occupant = character;
-            yield return true;
-        }
+
+        //Move and update data
+        tiles[oldPos].occupant = null;
+        character.tilePos = nextPos;
+        Tween moveTween = character.transform.DOMove(tiles[nextPos].GetCombatTilePos(), moveLerpSpeed);
+        yield return moveTween.WaitForCompletion();
+        tiles[nextPos].occupant = character;
+        yield return true;
+        
     }
 
     private void PlaceCharacter(Character character, int newPos)
