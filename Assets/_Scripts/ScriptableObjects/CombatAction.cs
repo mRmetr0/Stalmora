@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using DG.Tweening;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -20,12 +22,16 @@ public class CombatAction : ScriptableObject
         effects = new [] { _effect };
     }
 
-    public void UseAction(Character self)
+    public IEnumerator UseAction(Character self)
     {
         Effect[] currentEffects = isPlus ? effectsPlus : effects;
         foreach (Effect effect in currentEffects)
         {
-            if (!effect.ActivateEffect(self)) return; //If action cannot be done fully, end action
+            IEnumerator effectCoroutine = effect.ActivateEffect(self);
+            yield return self.StartCoroutine(effectCoroutine);
+            bool? uninterrupted = effectCoroutine.Current as bool?;
+            bool breakAction = uninterrupted is null || !(bool)uninterrupted;
+            if (breakAction) break; //If action cannot be done fully, end action
         }
     }
 
@@ -64,7 +70,7 @@ public class CombatAction : ScriptableObject
         /// <param name="self">Skill user</param>
         /// <param name="target">Skill effector, usually for damage</param>
         /// <returns>If the skill was succesful. Might stop the entire action if unable to complete fully</returns>
-        public bool ActivateEffect(Character self)
+        public IEnumerator ActivateEffect(Character self)
         {
             bool isExecuted = true;
             switch (type)
@@ -79,19 +85,23 @@ public class CombatAction : ScriptableObject
                     self.GetBlock(value);
                     break;
                 case(Type.Move):
-                    isExecuted = TileManager.manager.MoveCharacter(self, value, !uninterruptable);
+                    IEnumerator movingCharacter = TileManager.manager.MoveCharacter(self, value, !uninterruptable);
+                    yield return movingCharacter;
+                    bool? moved = movingCharacter.Current as bool?;
+                    if (moved != null) isExecuted = (bool)moved;
                     break;
                 case(Type.Switch):
                     self.SwitchDirection();
                     break;
                 case(Type.Push):
-                    HandleMoveTarget(self, value);
+                    yield return HandleMoveTarget(self, value);
                     break;
                 case(Type.Pull):    
-                    HandleMoveTarget(self, -value);
+                    yield return HandleMoveTarget(self, -value);
                     break;
             }
-            return isExecuted || uninterruptable || CombatManager.manager.CombatOver;
+            
+            yield return isExecuted || uninterruptable || CombatManager.manager.CombatOver;
         }
 
         private void HandleAttack(Character attacker)
@@ -111,7 +121,7 @@ public class CombatAction : ScriptableObject
         /// </summary>
         /// <param name="attacker"></param>
         /// <param name="moveValue">Amount the target should move, positive is push, negative is pull</param>
-        private void HandleMoveTarget(Character attacker, int moveValue)
+        private IEnumerator HandleMoveTarget(Character attacker, int moveValue)
         {
             int startPos = attacker.tilePos;
             moveValue *= (attacker.facingRight ? 1 : -1);
@@ -120,7 +130,7 @@ public class CombatAction : ScriptableObject
                 int pos = startPos + (attackRange[i] * (attacker.facingRight ? 1 : -1));
                 Character toAttack = TileManager.manager.GetTile(pos).occupant;
                 if (toAttack is null) continue;
-                TileManager.manager.MoveCharacter(toAttack, moveValue, !uninterruptable);
+                yield return TileManager.manager.MoveCharacter(toAttack, moveValue, !uninterruptable);
             }
         }
     }

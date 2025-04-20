@@ -56,10 +56,14 @@ public class CombatManager : MonoBehaviour
 
     public IEnumerator StartEnemyTurn()
     {
+        yield return HandleAction(enemy, behaviour.GetEnemyAction());
+    }
+
+    public IEnumerator HandleAction(Character actor, CombatAction action)
+    {
         ui.gameObject.SetActive(false);
-        yield return new WaitForSeconds(.4f);
-        behaviour.GetEnemyAction().UseAction(enemy);
-        yield return new WaitForSeconds(.4f);
+        yield return StartCoroutine(action.UseAction(actor));
+        yield return new WaitForSeconds(0.2f);
         EndAction();
     }
 

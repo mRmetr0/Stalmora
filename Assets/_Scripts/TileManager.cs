@@ -1,3 +1,4 @@
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -72,29 +73,35 @@ public class TileManager : MonoBehaviour
     /// <param name="direction">Direction to move</param>
     /// <param name="onlyIfExecutable">If cant fully move, dont move character at all</param>
     /// <returns>If movement was able to fully execute</returns>
-    public bool MoveCharacter(Character character, int direction, bool onlyIfExecutable = true)
+    public IEnumerator MoveCharacter(Character character, int direction, bool onlyIfExecutable = true)
     {
         int oldPos = character.tilePos;
-        int nextPos;
-        int pastPos = oldPos;
+        int nextPos = oldPos;
         for (int i = 1; i <= Mathf.Abs(direction); i++)
         {
-            nextPos = character.tilePos + direction / Mathf.Abs(direction) * i;
+            int nextPosCalc = character.tilePos + direction / Mathf.Abs(direction) * i;
             //Check if can move
-            if (nextPos < 0 || nextPos >= tiles.Length || tiles[nextPos].Occupied()) //CANNOT MOVE FURTHER
+            if (nextPosCalc < 0 || nextPosCalc >= tiles.Length || tiles[nextPosCalc].Occupied()) //CANNOT MOVE FURTHER
             {
-                if (onlyIfExecutable) return false;
-                break;
+                if (onlyIfExecutable)
+                {
+                    yield return false;
+                    yield break;
+                }
             }
-
-            pastPos = nextPos;
+            nextPos = nextPosCalc;
         }
-        //Move and update data
-        tiles[oldPos].occupant = null;
-        character.tilePos = pastPos;
-        character.transform.DOMove(tiles[pastPos].GetCombatTilePos(), moveLerpSpeed);
-        tiles[pastPos].occupant = character;
-        return true;
+        //Bother with movement logic only if character can move:
+        if (nextPos != oldPos)
+        {
+            //Move and update data
+            tiles[oldPos].occupant = null;
+            character.tilePos = nextPos;
+            Tween moveTween = character.transform.DOMove(tiles[nextPos].GetCombatTilePos(), moveLerpSpeed);
+            yield return moveTween.WaitForCompletion();
+            tiles[nextPos].occupant = character;
+            yield return true;
+        }
     }
 
     private void PlaceCharacter(Character character, int newPos)

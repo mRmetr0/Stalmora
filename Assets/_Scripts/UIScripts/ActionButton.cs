@@ -58,10 +58,9 @@ public class ActionButton : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
 
     public void OnPointerDown(PointerEventData data)
     {
-        action.UseAction(TileManager.manager.PlayerCharacter);
+        CombatManager.manager.StartCoroutine(CombatManager.manager.HandleAction(TileManager.manager.PlayerCharacter, action));
         spriteRenderer.color = uiData.selectColor;
         TweenColor(uiData.hoverColor, uiData.selectLerpSpeed);
-        CombatManager.manager.EndAction();
     }
     
     public void OnPointerEnter(PointerEventData data)
